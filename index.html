@@ -100,6 +100,32 @@
   input[type=range] { width: 100%; accent-color: var(--amber); height: 28px; }
   .warn { border: 1px solid var(--red); color: var(--red); border-radius: 8px; padding: 12px 14px; }
 
+  /* Blink Alertness demo */
+  #blink { position: absolute; inset: 0; display: flex; flex-direction: column; gap: 14px; padding: 16px 20px 20px; overflow: auto; }
+  .sim-banner { border: 1px dashed var(--amber); color: var(--amber); background: rgba(240,180,76,.08); border-radius: 8px; padding: 9px 16px; text-align: center; font-size: 20px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; }
+  .blink-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(330px, 1fr)); gap: 16px; flex: 1; min-height: 0; }
+  .bpanel { background: var(--panel); border: 2px solid var(--line); border-radius: 10px; padding: 18px 20px; display: flex; flex-direction: column; gap: 12px; transition: border-color .4s, background-color .4s; }
+  .bpanel h3 { color: var(--muted); font-weight: 500; }
+  .bpanel svg.headset { width: 100%; height: auto; flex: 1; min-height: 180px; }
+  .rt-target { flex: 1; min-height: 170px; border: 1px solid var(--line); border-radius: 10px; background: #0b1119; display: grid; place-items: center; position: relative; }
+  .rt-disc { width: 96px; height: 96px; border-radius: 50%; background: var(--amber); box-shadow: 0 0 40px rgba(240,180,76,.55); }
+  .rt-text { position: absolute; bottom: 12px; left: 0; right: 0; text-align: center; font-size: 22px; font-weight: 500; }
+  .rt-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .rt-stats div span, .metric .lab { display: block; color: var(--muted); font-size: 16px; }
+  .rt-stats div b { font-size: 24px; font-weight: 600; }
+  .metric { display: grid; grid-template-columns: 1fr 190px; align-items: end; gap: 12px; padding-bottom: 12px; border-bottom: 1px solid var(--line); }
+  .metric .val { font-size: 38px; font-weight: 600; line-height: 1.1; }
+  .metric .val small { font-size: 18px; font-weight: 500; color: var(--muted); }
+  .metric svg { width: 190px; height: 52px; }
+  .metric polyline { fill: none; stroke: var(--text); stroke-width: 2; vector-effect: non-scaling-stroke; }
+  #blink-read.amber { border-color: var(--amber); background: #2a2213; }
+  #blink-read.red { border-color: var(--red); background: #2e1716; }
+  #blink-read.amber polyline { stroke: var(--amber); } #blink-read.red polyline { stroke: var(--red); }
+  .blink-alert { margin-top: auto; border-radius: 8px; padding: 12px 16px; font-size: 20px; font-weight: 600; }
+  #blink-read.amber .blink-alert { background: rgba(240,180,76,.16); color: var(--amber); }
+  #blink-read.red .blink-alert { background: rgba(240,114,99,.2); color: var(--red); }
+  .tag { display: inline-block; border: 1px solid var(--amber); color: var(--amber); border-radius: 999px; padding: 1px 12px; font-size: 16px; font-weight: 500; align-self: flex-start; }
+
   /* Results */
   .headline { display: flex; align-items: baseline; gap: 18px; flex-wrap: wrap; margin-top: 20px; }
   .headline .num { font-size: 68px; font-weight: 600; letter-spacing: -0.02em; line-height: 1; }
@@ -174,6 +200,22 @@
         <button class="btn" data-start="blindspot">Start</button>
       </div>
     </article>
+    <article class="card">
+      <svg viewBox="0 0 480 220" role="img" aria-label="A headset outline with two drawn eyes, one half closed">
+        <rect x="96" y="48" width="288" height="124" rx="46" fill="#162130" stroke="#a7b1bf" stroke-width="4"/>
+        <path d="M96 96 H52 M384 96 H428 M96 126 H52 M384 126 H428" stroke="#a7b1bf" stroke-width="4" stroke-linecap="round"/>
+        <ellipse cx="184" cy="110" rx="44" ry="26" fill="#ece8df"/><circle cx="184" cy="110" r="17" fill="#3f6f9c"/><circle cx="184" cy="110" r="8" fill="#0b0f14"/>
+        <path d="M252 110 Q296 136 340 110" fill="none" stroke="#ece8df" stroke-width="5" stroke-linecap="round"/>
+        <polyline points="150,200 190,196 220,198 250,186 280,188 300,170 330,166" fill="none" stroke="#f0b44c" stroke-width="3"/>
+      </svg>
+      <div class="body">
+        <span class="tag">Scripted demo</span>
+        <h2>Blink Alertness</h2>
+        <p>Shows how blink rate and eye-closure time could warn of fatigue during a reaction-time test.</p>
+        <p class="meta">A 75-second animation. Nothing is measured or saved.</p>
+        <button class="btn" data-start="blink">Start</button>
+      </div>
+    </article>
   </div>
 </main>
 
@@ -210,6 +252,54 @@
     <div class="cue" id="g1-cue" hidden>
       <div class="muted" id="g1-cue-n" style="font-size:20px"></div>
       <div class="big" id="g1-cue-t"></div>
+    </div>
+
+    <div id="blink" hidden>
+      <div class="sim-banner">Simulated data for demonstration.</div>
+      <div class="blink-grid">
+        <section class="bpanel">
+          <h3>Eyes inside the headset (drawn)</h3>
+          <svg class="headset" viewBox="0 0 440 260" role="img" aria-label="Drawn pair of eyes inside a headset outline, blinking">
+            <defs>
+              <clipPath id="lidL"><ellipse id="lidL-e" cx="146" cy="130" rx="60" ry="34"/></clipPath>
+              <clipPath id="lidR"><ellipse id="lidR-e" cx="294" cy="130" rx="60" ry="34"/></clipPath>
+            </defs>
+            <path d="M52 100 H14 M388 100 H426 M52 160 H14 M388 160 H426" stroke="#a7b1bf" stroke-width="5" stroke-linecap="round"/>
+            <rect x="52" y="44" width="336" height="172" rx="62" fill="#111a26" stroke="#a7b1bf" stroke-width="5"/>
+            <path d="M206 216 Q220 196 234 216" fill="#0f1620" stroke="#a7b1bf" stroke-width="5"/>
+            <circle cx="146" cy="130" r="72" fill="#0b1119" stroke="#2b3a4f" stroke-width="3"/>
+            <circle cx="294" cy="130" r="72" fill="#0b1119" stroke="#2b3a4f" stroke-width="3"/>
+            <g clip-path="url(#lidL)"><ellipse cx="146" cy="130" rx="60" ry="34" fill="#ece8df"/><circle cx="146" cy="130" r="24" fill="#3f6f9c"/><circle cx="146" cy="130" r="11" fill="#0b0f14"/><circle cx="139" cy="122" r="4" fill="#fff"/></g>
+            <g clip-path="url(#lidR)"><ellipse cx="294" cy="130" rx="60" ry="34" fill="#ece8df"/><circle cx="294" cy="130" r="24" fill="#3f6f9c"/><circle cx="294" cy="130" r="11" fill="#0b0f14"/><circle cx="287" cy="122" r="4" fill="#fff"/></g>
+            <g id="lid-lines" fill="none" stroke="#ece8df" stroke-width="5" stroke-linecap="round" opacity="0">
+              <path d="M86 130 Q146 152 206 130"/><path d="M234 130 Q294 152 354 130"/>
+            </g>
+          </svg>
+          <p id="blink-state" style="font-size:20px; font-weight:500">Eyes open</p>
+        </section>
+        <section class="bpanel">
+          <h3>Reaction-time test (auto-played)</h3>
+          <div class="rt-target"><div class="rt-disc" id="rt-disc" hidden></div><div class="rt-text" id="rt-text"></div></div>
+          <div class="rt-stats">
+            <div><span>Last</span><b id="rt-last">-</b></div>
+            <div><span>Mean of last 5</span><b id="rt-mean">-</b></div>
+            <div><span>Lapses over 500 ms</span><b id="rt-lapse">0</b></div>
+          </div>
+          <svg id="rt-bars" viewBox="0 0 300 70" preserveAspectRatio="none" style="width:100%; height:70px" role="img" aria-label="Recent reaction times as bars"></svg>
+        </section>
+        <section class="bpanel" id="blink-read">
+          <h3>Blink readouts · last 20 seconds</h3>
+          <div class="metric"><div><span class="lab">Blinks per minute</span><span class="val" id="bm-rate">-</span></div><svg viewBox="0 0 190 52" preserveAspectRatio="none"><polyline id="sp-rate"/></svg></div>
+          <div class="metric"><div><span class="lab">Mean blink duration</span><span class="val" id="bm-dur">-</span></div><svg viewBox="0 0 190 52" preserveAspectRatio="none"><polyline id="sp-dur"/></svg></div>
+          <div class="metric"><div><span class="lab">Time with eyes closed</span><span class="val" id="bm-closed">-</span></div><svg viewBox="0 0 190 52" preserveAspectRatio="none"><polyline id="sp-closed"/></svg></div>
+          <p class="muted" id="blink-thresh">Amber at 8% eyes closed, red at 15%.</p>
+          <p class="blink-alert" id="blink-alert" role="status" hidden>Alertness dropping. Take a break before critical work.</p>
+        </section>
+      </div>
+      <div class="row" id="blink-end" hidden>
+        <span>Demo finished.</span>
+        <button class="btn" id="blink-replay">Replay</button>
+      </div>
     </div>
 
     <div class="panel" id="msg" hidden><p id="msg-text"></p></div>
@@ -381,6 +471,15 @@ const GAMES = {
       'When the cross turns into a circle, press <kbd>F</kbd>. On some sweeps no dot ever appears: do not press Space on those. Both check that your gaze is holding still.',
     ],
   },
+  blink: {
+    name: 'Blink Alertness',
+    why: 'Tired eyes blink more often and stay closed for longer. A headset that already watches the eyes could use that to warn a crew member before a critical task. This is a scripted animation made for a screen recording. It does not use a camera and measures nothing.',
+    rules: [
+      'A drawn pair of eyes blinks on a fixed script: short, normal blinks for the first 30 seconds, then longer and more frequent closures.',
+      'A reaction-time test plays itself beside the eyes, and its times slow down as the blinks get longer.',
+      'The readouts track blinks per minute, mean blink duration and time with eyes closed. The panel turns amber, then red, as eye-closure time passes 8% and 15%.',
+    ],
+  },
 };
 const app = { screen: 'home', game: null };
 const SCREENS = ['home', 'howto', 'stage', 'results'];
@@ -390,6 +489,7 @@ function show(name) {
   window.scrollTo(0, 0);
 }
 function sessionsLine(game) {
+  if (!store[game]) return 'Simulated data for demonstration. Nothing is saved.';
   const n = store[game].length;
   if (!n) return 'No saved sessions yet. Your first three build your baseline.';
   if (n < 3) return `${n} saved session${n > 1 ? 's' : ''}. ${3 - n} more to finish your baseline.`;
@@ -420,11 +520,11 @@ function startGame(game) {
   setProgress('');
   show('stage');
   $('arena').focus();
-  if (game === 'module') g1Start(); else g2Start();
+  if (game === 'module') g1Start(); else if (game === 'blindspot') g2Start(); else g3Start();
 }
 function stopGames() {
-  g1Stop(); g2Stop();
-  for (const id of ['view3d', 'bs', 'g1-hud', 'g1-cue', 'msg', 'calib', 'pos']) $(id).hidden = true;
+  g1Stop(); g2Stop(); g3Stop();
+  for (const id of ['blink', 'view3d', 'bs', 'g1-hud', 'g1-cue', 'msg', 'calib', 'pos']) $(id).hidden = true;
 }
 const setProgress = t => { $('bar-progress').textContent = t; };
 function arenaMessage(text) { $('msg-text').textContent = text; $('msg').hidden = false; }
@@ -663,9 +763,14 @@ function g1Toast(text, cls) {
 
 function g1Aimed() {
   g1.camera.updateMatrixWorld();
-  g1.ray.setFromCamera({ x: 0, y: 0 }, g1.camera);
-  const hit = g1.ray.intersectObjects(g1.picks, false)[0];
-  return hit ? hit.object.userData.hatch : null;
+  // Three rays a hair apart: a single ray through the exact centre of a hatch
+  // can slip between the disc's triangles where they all meet.
+  for (const [x, y] of [[0, 0], [0.004, 0.003], [-0.003, 0.004]]) {
+    g1.ray.setFromCamera({ x, y }, g1.camera);
+    const hit = g1.ray.intersectObjects(g1.picks, false)[0];
+    if (hit) return hit.object.userData.hatch;
+  }
+  return null;
 }
 
 function g1Select() {
@@ -1041,6 +1146,100 @@ function g2Finish() {
     trend: trendSVG(vals, 3, v => v.toFixed(1), store.blindspot.map(s => !s.reliable)),
     trendNote: 'Mean blind-spot area per session in square degrees. Hollow points are sessions marked unreliable. A rising area is the change to watch.',
   });
+}
+
+/* ============================================================
+   DEMO - Blink Alertness (scripted animation, not a measurement)
+   ============================================================ */
+const BLINK = { len: 75, win: 20, amber: 8, red: 15 };
+const g3 = { raf: 0 };
+function seeded(a) { return () => { a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+
+/* The whole timeline is written up front from a fixed seed, so every run is identical. */
+function blinkScript() {
+  const r = seeded(7), R = (a, b) => a + r() * (b - a), phase = t => (t < 30 ? 0 : t < 48 ? 1 : 2);
+  const blinks = [], stim = [];
+  for (let t = 1.4; t < BLINK.len;) {
+    const p = phase(t), d = [R(0.13, 0.17), R(0.30, 0.42), R(0.42, 0.60)][p];
+    blinks.push({ t, d });
+    t += d + [R(2.9, 5.0), R(2.0, 3.2), R(1.2, 2.1)][p];
+  }
+  for (let t = 2.5; t < BLINK.len - 1.6;) {
+    let rt = [R(0.24, 0.31), R(0.32, 0.45), R(0.42, 0.72)][phase(t)];
+    const b = blinks.find(b => t >= b.t - 0.05 && t < b.t + b.d);
+    if (b) rt += b.t + b.d - t;                 // the light came on while the eyes were shut
+    stim.push({ t, rt });
+    t += rt + R(2.6, 4.6);
+  }
+  return { blinks, stim };
+}
+
+function g3Start() {
+  Object.assign(g3, blinkScript(), { series: { rate: [], dur: [], closed: [] }, nextSample: 0, t0: performance.now() });
+  $('blink').hidden = false; $('blink-end').hidden = true;
+  g3.raf = requestAnimationFrame(g3Frame);
+}
+function g3Stop() { cancelAnimationFrame(g3.raf); g3.raf = 0; }
+$('blink-replay').addEventListener('click', () => { g3Stop(); g3Start(); $('arena').focus(); });
+
+function spark(id, data, max) {
+  const n = data.length;
+  $(id).setAttribute('points', data.map((v, i) => `${(n > 1 ? i / (n - 1) : 0) * 190},${(50 - Math.min(1, v / max) * 46).toFixed(1)}`).join(' '));
+}
+
+function g3Frame(ts) {
+  g3.raf = requestAnimationFrame(g3Frame);
+  const t = Math.min(BLINK.len, (ts - g3.t0) / 1000);
+
+  // Eyes: lids droop a little as the script moves into the drowsy phases.
+  const base = t < 30 ? 1 : t < 48 ? 1 - 0.2 * (t - 30) / 18 : 0.8 - 0.15 * Math.min(1, (t - 48) / 15);
+  const now = g3.blinks.find(b => t >= b.t && t <= b.t + b.d);
+  let open = base;
+  if (now) { const k = (t - now.t) / now.d; open = base * (1 - (k < 0.25 ? k / 0.25 : k > 0.7 ? (1 - k) / 0.3 : 1)); }
+  const ry = Math.max(0.5, 34 * open);
+  $('lidL-e').setAttribute('ry', ry); $('lidR-e').setAttribute('ry', ry);
+  $('lid-lines').setAttribute('opacity', Math.max(0, 1 - open * 4).toFixed(2));
+  $('blink-state').textContent = now ? 'Eyes closed' : base < 0.9 ? 'Eyes open, lids drooping' : 'Eyes open';
+
+  // Readouts over a rolling window.
+  const w0 = Math.max(0, t - BLINK.win), span = Math.min(BLINK.win, Math.max(t, 6));
+  const done = g3.blinks.filter(b => b.t + b.d <= t && b.t + b.d > w0);
+  const rate = done.length * 60 / span;
+  const dur = done.length ? done.reduce((s, b) => s + b.d, 0) / done.length * 1000 : 0;
+  const closed = g3.blinks.reduce((s, b) => s + Math.max(0, Math.min(t, b.t + b.d) - Math.max(w0, b.t)), 0) / span * 100;
+  $('bm-rate').innerHTML = `${rate.toFixed(0)} <small>per min</small>`;
+  $('bm-dur').innerHTML = done.length ? `${dur.toFixed(0)} <small>ms</small>` : '-';
+  $('bm-closed').innerHTML = `${closed.toFixed(1)} <small>%</small>`;
+  const level = closed >= BLINK.red ? 'red' : closed >= BLINK.amber ? 'amber' : '';
+  $('blink-read').className = 'bpanel ' + level;
+  $('blink-alert').hidden = !level;
+  if (t >= g3.nextSample) {
+    g3.nextSample += 0.25;
+    const s = g3.series; s.rate.push(rate); s.dur.push(dur); s.closed.push(closed);
+    for (const k in s) if (s[k].length > 120) s[k].shift();
+    spark('sp-rate', s.rate, 45); spark('sp-dur', s.dur, 650); spark('sp-closed', s.closed, 30);
+  }
+
+  // Reaction-time test, played from the same script.
+  const cur = g3.stim.find(s => t >= s.t && t < s.t + s.rt + 0.9);
+  const waiting = cur && t < cur.t + cur.rt;
+  $('rt-disc').hidden = !waiting;
+  $('rt-text').textContent = !cur ? 'Waiting for the light' : waiting ? `${Math.round((t - cur.t) * 1000)} ms` : `Pressed at ${Math.round(cur.rt * 1000)} ms${cur.rt > 0.5 ? ' · lapse' : ''}`;
+  const resp = g3.stim.filter(s => s.t + s.rt <= t);
+  if (resp.length) {
+    const last5 = resp.slice(-5);
+    $('rt-last').textContent = Math.round(resp[resp.length - 1].rt * 1000) + ' ms';
+    $('rt-mean').textContent = Math.round(mean(last5.map(s => s.rt)) * 1000) + ' ms';
+  } else { $('rt-last').textContent = '-'; $('rt-mean').textContent = '-'; }
+  $('rt-lapse').textContent = resp.filter(s => s.rt > 0.5).length;
+  $('rt-bars').innerHTML = resp.slice(-14).map((s, i) => {
+    const h = Math.min(1, s.rt / 0.9) * 66;
+    return `<rect x="${i * 21.4 + 2}" y="${70 - h}" width="16" height="${h}" rx="2" fill="${s.rt > 0.5 ? '#f07263' : '#a7b1bf'}"/>`;
+  }).join('');
+
+  const mmss = v => `${Math.floor(v / 60)}:${String(Math.floor(v % 60)).padStart(2, '0')}`;
+  setProgress(`Scripted demo · ${mmss(t)} of ${mmss(BLINK.len)}`);
+  if (t >= BLINK.len) { cancelAnimationFrame(g3.raf); g3.raf = 0; $('blink-end').hidden = false; }
 }
 
 /* Small hook for scripted checks; not used by the games themselves. */
